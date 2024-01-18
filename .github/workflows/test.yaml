@@ -46,7 +46,7 @@ jobs:
     - name: github cache
       uses: actions/cache@v2
       with:
-        path: ${{ inputs.path }}
+        path: .ci_cache/cache
         key: cache-${{ github.sha }}
         restore-keys: |
           cache-
