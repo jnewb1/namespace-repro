@@ -7,8 +7,8 @@ jobs:
     runs-on: namespace-profile-arm64-2x8
     steps:
     - uses: actions/checkout@v4
-    - id: cache
-      uses: jnewb1/namespace-utils/auto-cache@main
+    - name: namespace cache
+      uses: namespacelabs/nscloud-cache-action@v1
       with:
         path: .ci_cache/cache
     - id: build
@@ -25,8 +25,8 @@ jobs:
     runs-on: namespace-profile-arm64-2x8
     steps:
     - uses: actions/checkout@v4
-    - id: cache
-      uses: jnewb1/namespace-utils/auto-cache@main
+    - name: namespace cache
+      uses: namespacelabs/nscloud-cache-action@v1
       with:
         path: .ci_cache/cache
     - id: build
@@ -43,10 +43,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v4
-    - id: cache
-      uses: jnewb1/namespace-utils/auto-cache@main
+    - name: github cache
+      uses: actions/cache@v2
       with:
-        path: .ci_cache/cache
+        path: ${{ inputs.path }}
+        key: cache-${{ github.sha }}
+        restore-keys: |
+          cache-
     - id: build
       shell: bash
       run: |
