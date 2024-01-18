@@ -2,7 +2,7 @@ on:
   push:
 
 jobs:
-  test:
+  test_with_cache:
     name: test
     runs-on: namespace-profile-arm64-2x8
     steps:
@@ -18,4 +18,22 @@ jobs:
     - id: test
       shell: bash
       run: |
-        docker run -v /cache/.ci_cache/cache:/tmp/cache -v /cache:/workspace test python /workspace/test.py 
+        docker run -v /cache/.ci_cache/cache:/tmp/cache -v $GITHUB_WORKSPACE:/workspace test python /workspace/test.py 
+
+  test_with_github_workspace:
+    name: test
+    runs-on: namespace-profile-arm64-2x8
+    steps:
+    - uses: actions/checkout@v4
+    - id: cache
+      uses: jnewb1/namespace-utils/auto-cache@main
+      with:
+        path: .ci_cache/cache
+    - id: build
+      shell: bash
+      run: |
+        docker build -t test .
+    - id: test
+      shell: bash
+      run: |
+        docker run -v $GITHUB_WORKSPACE/.ci_cache/cache:/tmp/cache -v $GITHUB_WORKSPACE:/workspace test python /workspace/test.py 
