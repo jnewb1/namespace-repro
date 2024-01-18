@@ -36,7 +36,25 @@ jobs:
     - id: test
       shell: bash
       run: |
-        docker run -v $GITHUB_WORKSPACE/.ci_cache/cache:/tmp/cache -v $GITHUB_WORKSPACE:/workspace test python /workspace/test.py 
+        docker run -v $GITHUB_WORKSPACE/.ci_cache/cache:/tmp/cache -v $GITHUB_WORKSPACE:/workspace test python /workspace/test.py
+
+  test_with_pwd:
+    name: test_with_pwd
+    runs-on: namespace-profile-arm64-2x8
+    steps:
+    - uses: actions/checkout@v4
+    - name: namespace cache
+      uses: namespacelabs/nscloud-cache-action@v1
+      with:
+        path: .ci_cache/cache
+    - id: build
+      shell: bash
+      run: |
+        docker build -t test .
+    - id: test
+      shell: bash
+      run: |
+        docker run -v $(pwd)/.ci_cache/cache:/tmp/cache -v $GITHUB_WORKSPACE:/workspace test python /workspace/test.py 
 
   test_with_github_runners:
     name: test_with_github_runners
