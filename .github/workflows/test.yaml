@@ -3,7 +3,7 @@ on:
 
 jobs:
   test_with_cache:
-    name: test
+    name: test_with_cache
     runs-on: namespace-profile-arm64-2x8
     steps:
     - uses: actions/checkout@v4
@@ -21,8 +21,26 @@ jobs:
         docker run -v /cache/.ci_cache/cache:/tmp/cache -v $GITHUB_WORKSPACE:/workspace test python /workspace/test.py 
 
   test_with_github_workspace:
-    name: test
+    name: test_with_github_workspace
     runs-on: namespace-profile-arm64-2x8
+    steps:
+    - uses: actions/checkout@v4
+    - id: cache
+      uses: jnewb1/namespace-utils/auto-cache@main
+      with:
+        path: .ci_cache/cache
+    - id: build
+      shell: bash
+      run: |
+        docker build -t test .
+    - id: test
+      shell: bash
+      run: |
+        docker run -v $GITHUB_WORKSPACE/.ci_cache/cache:/tmp/cache -v $GITHUB_WORKSPACE:/workspace test python /workspace/test.py 
+
+  test_with_github_runners:
+    name: test_with_github_runners
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v4
     - id: cache
